@@ -22,16 +22,20 @@ $Promise.prototype.then = function( successCb, errorCb){
 	};
 
 $Promise.prototype.callHandlers = function(value){
-	var handler, newDeferral;
+	var handler, newDeferral, newValue;
+	var currentHandlers = this.handlerGroups[0];
 	while(this.handlerGroups.length && this.state !== 'pending'){
-		if(this.state === 'resolved') handler = this.handlerGroups[0].successCb;
-		if(this.state === 'rejected') handler = this.handlerGroups[0].errorCb;
-		if(handler) handler(value);
-		newDeferral = this.handlerGroups[0].forwarder;
-		console.log(newDeferral);
+		if(this.state === 'resolved') handler = currentHandlers.successCb;
+		if(this.state === 'rejected') handler = currentHandlers.errorCb;
+		if(handler) {newValue = handler(value) || value;} else { newValue = value; }
+		newDeferral = currentHandlers.forwarder;
 		this.handlerGroups.shift();
+		newDeferral.$promise.handlerGroups = this.handlerGroups;
+		if(this.state === 'resolved') newDeferral.resolve(newValue);
+		if(this.state === 'rejected') newDeferral.reject(newValue);
 	}
-	//return newDeferral.$promise;
+	// 	console.log(newDeferral);
+	// return newDeferral.$promise;
 };
 
 $Promise.prototype.catch = function(fn){

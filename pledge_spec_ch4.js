@@ -63,7 +63,7 @@ describe('For a given promiseA (pA)', function(){
     });
 
     // Rejection bubbles down to the first available error handler.
-    xit("if pA is rejected but has no error handler, pB is rejected with pA's reason", function(){
+    it("if pA is rejected but has no error handler, pB is rejected with pA's reason", function(){
       var promiseB = promiseA.then();
       deferralA.reject( 'darn' );
       // do not set state manually; 'reject' should be called somewhere!
@@ -72,7 +72,7 @@ describe('For a given promiseA (pA)', function(){
     });
 
     // This is for normal (synchronous / non-promise) return values
-    xit("if pA's success handler returns a value x, pB is resolved with x", function(){
+    it("if pA's success handler returns a value x, pB is resolved with x", function(){
       var promiseB = promiseA.then( thisReturnsHi );
       deferralA.resolve( 'an ordinary value' );
       expect( promiseB.state ).toBe( 'resolved' );
@@ -80,7 +80,7 @@ describe('For a given promiseA (pA)', function(){
     });
 
     // This is for normal (synchronous / non-promise) return values
-    xit("if pA's error handler returns a value x, pB is resolved with x", function(){
+    it("if pA's error handler returns a value x, pB is resolved with x", function(){
       /* Why resolved? This is similar to try-catch. If promiseA is
       rejected (equivalent to `try` failure), we pass the reason to
       promiseA's error handler (equivalent to `catch`). We have now
