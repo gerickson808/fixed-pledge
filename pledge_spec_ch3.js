@@ -102,6 +102,7 @@ describe('Another promise', function(){
       promiseForThing.then( null, fn.logInput );
       promiseForThing.then( null, fn.logOops );
       thingDeferral.reject( theReason );
+      console.log(log);
       expect( log ).toEqual( [{code: 'unauthorized'}, {code: 'oops'}] );
     });
 

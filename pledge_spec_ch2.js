@@ -108,9 +108,12 @@ describe('A promise', function(){
     });
 
     it('calls each success handler when added', function(){
+      console.log(foo);
       promiseForNum.then( fn.setFoo10 );
       expect( foo ).toBe( 10 );
+      console.log(foo);
       promiseForNum.then( fn.addToFoo );
+      console.log(foo);
       expect( foo ).toBe( 35 );
     });
 

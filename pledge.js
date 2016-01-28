@@ -9,9 +9,10 @@ var $Promise = function(){
 	this.handlerGroups = [];
 };
 
-$Promise.prototype.then = function( successCb, errorCb){
+$Promise.prototype.then = function( successCb, errorCb){	
 		if (typeof successCb != 'function') successCb = null;
 		if (typeof errorCb != 'function') errorCb = null;
+
 		var newDeferral = new Deferral();
 		this.handlerGroups.push({successCb:successCb, errorCb:errorCb, forwarder: newDeferral});
 
@@ -23,16 +24,36 @@ $Promise.prototype.then = function( successCb, errorCb){
 
 $Promise.prototype.callHandlers = function(value){
 	var handler, newDeferral, newValue;
-	var currentHandlers = this.handlerGroups[0];
+	var currentHandlers; 
 	while(this.handlerGroups.length && this.state !== 'pending'){
+		currentHandlers = this.handlerGroups[0];
 		if(this.state === 'resolved') handler = currentHandlers.successCb;
 		if(this.state === 'rejected') handler = currentHandlers.errorCb;
-		if(handler) {newValue = handler(value) || value;} else { newValue = value; }
+
 		newDeferral = currentHandlers.forwarder;
+		//newDeferral.$promise.handlerGroups = this.handlerGroups;
 		this.handlerGroups.shift();
-		newDeferral.$promise.handlerGroups = this.handlerGroups;
-		if(this.state === 'resolved') newDeferral.resolve(newValue);
-		if(this.state === 'rejected') newDeferral.reject(newValue);
+
+		if(handler) {
+			try{
+				newValue = handler(value) || value;
+				//If handler returns a promise!!:
+				if(newValue instanceof $Promise){
+					 newValue.then(function(value){
+					 	newDeferral.resolve(value);
+					 });
+				}else{
+					newDeferral.resolve(newValue);
+				}
+			} catch(e){
+				newDeferral.reject(e);
+			}
+		} else { 
+			newValue = value; 
+			if(this.state === 'rejected') newDeferral.reject(newValue);
+			if(this.state === 'resolved') newDeferral.resolve(newValue);
+		}
+
 	}
 	// 	console.log(newDeferral);
 	// return newDeferral.$promise;

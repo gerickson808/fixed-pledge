@@ -96,14 +96,14 @@ describe('For a given promiseA (pA)', function(){
 
     // Exceptions cause the returned promise to be rejected with the error.
     // Hint: you will need to use `try` & `catch` to make this work.
-    xit("if pA's success handler throws an error `e`, pB is rejected with `e`", function(){
+    it("if pA's success handler throws an error `e`, pB is rejected with `e`", function(){
       var promiseB = promiseA.then( thisThrowsErr );
       deferralA.resolve();
       expect( promiseB.state ).toBe( 'rejected' );
       expect( promiseB.value ).toBe( 'err' );
     });
 
-    xit("if pA's error handler throws an error `e`, pB is rejected with `e`", function(){
+    it("if pA's error handler throws an error `e`, pB is rejected with `e`", function(){
       var promiseB = promiseA.catch( thisThrowsErr );
       deferralA.reject();
       expect( promiseB.state ).toBe( 'rejected' );
@@ -114,7 +114,7 @@ describe('For a given promiseA (pA)', function(){
     normal value, but then you have to start writing .then inside .then.
     Instead, we want to make promiseB to "become" pZ by copying
     pZ's behavior — aka assimilation. This test is a brain-bender. */
-    xit("if pA's success handler returns promiseZ, pB mimics pZ", function(){
+    it("if pA's success handler returns promiseZ, pB mimics pZ", function(){
       var deferralZ = defer();
       var promiseZ = deferralZ.$promise;
       var promiseB = promiseA.then(function(){
@@ -125,7 +125,7 @@ describe('For a given promiseA (pA)', function(){
       expect( promiseB.value ).toBe( 'testing' );
     });
 
-    xit("if pA's error handler returns promiseZ, pB mimics pZ", function(){
+    it("if pA's error handler returns promiseZ, pB mimics pZ", function(){
       var deferralZ = defer();
       var promiseZ = deferralZ.$promise;
       var promiseB = promiseA.catch(function(){
@@ -142,7 +142,7 @@ describe('For a given promiseA (pA)', function(){
   });
 
   // Another demonstration. This should work if the previous specs passed.
-  xit('.then can be chained many times', function(){
+  it('.then can be chained many times', function(){
     var add1 = function (num) { return ++num; };
     var test = 0;
     promiseA.then( add1 ).then( add1 ).then().then( function (data) {
